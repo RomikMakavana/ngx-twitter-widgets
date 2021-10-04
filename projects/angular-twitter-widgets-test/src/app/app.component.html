@@ -1,0 +1,81 @@
+<div>
+  <div style="display: flex;">
+    <ngx-twitter-tweet style="width: 250px;"
+      [tweetID]="'20'"
+      (onLoad)="onLoad($event)">
+    </ngx-twitter-tweet>
+    <ngx-twitter-tweet style="width: 250px;"
+      [tweetID]="'20'"
+      [options]="{ size: 'large', text: 'I am Romik Makavana' }" (onLoad)="onLoad($event)">
+    </ngx-twitter-tweet>
+    
+  </div>
+  <div style="display: flex;">
+    <ngx-twitter-share style="width: 250px;"
+      [url]="'/'"
+      (onLoad)="onLoad($event)">
+    </ngx-twitter-share>
+    <ngx-twitter-share style="width: 250px;"
+      [url]="'https://andrewsuzuki.github.io/react-twitter-widgets/?path=/story/mention--default-text'"
+      [options]="{ size: 'large', text: 'I am Romik Makavana' }" (onLoad)="onLoad($event)">
+    </ngx-twitter-share>
+    
+  </div>
+  <div style="display: flex;">
+    <ngx-twitter-hashtag style="width: 250px;"
+      [hashtag]="'twitterdev'"
+      (onLoad)="onLoad($event)">
+    </ngx-twitter-hashtag>
+    <ngx-twitter-hashtag style="width: 250px;"
+      [hashtag]="'twitterdev'"
+      [options]="{ size: 'large' }" (onLoad)="onLoad($event)">
+    </ngx-twitter-hashtag>
+    
+  </div>
+  <div style="display: flex;">
+    <ngx-twitter-mention style="width: 250px;"
+      [username]="'twitterdev'"
+      (onLoad)="onLoad($event)">
+    </ngx-twitter-mention>
+    <ngx-twitter-mention style="width: 250px;"
+      [username]="'twitterdev'"
+      [options]="{ size: 'large' }" (onLoad)="onLoad($event)">
+    </ngx-twitter-mention>
+    
+  </div>
+  <div style="display: flex;">
+    <ngx-twitter-follow style="width: 250px;"
+      [username]="'twitterdev'"
+      (onLoad)="onLoad($event)">
+    </ngx-twitter-follow>
+    <ngx-twitter-follow style="width: 250px;"
+      [username]="'twitterdev'"
+      [options]="{ size: 'large' }" (onLoad)="onLoad($event)">
+    </ngx-twitter-follow>
+    
+  </div>
+
+  <div style="display: flex;">
+
+    <ngx-twitter-timeline style="width: 250px;"
+      [source]="{sourceType: 'list', ownerScreenName: 'twitterdev', slug: 'national-parks'}"
+      [options]="{chrome : ['noheader', 'nofooter'], height: '400'}" (onLoad)="onLoad($event)">
+    </ngx-twitter-timeline>
+    
+    <ngx-twitter-timeline style="width: 250px;"
+      [source]="{sourceType: 'profile', screenName: 'GDGIndia', slug: 'national-parks'}"
+      [options]="{chrome : [], borderColor: '#292F33', height: '400'}" (onLoad)="onLoad($event)">
+    </ngx-twitter-timeline>
+
+    <ngx-twitter-timeline style="width: 250px;"
+      [source]="{sourceType: 'collection', id: '539487832448843776'}"
+      [options]="{chrome : ['noheader', 'nofooter'], theme: 'dark', height: '400'}" (onLoad)="onLoad($event)">
+    </ngx-twitter-timeline>
+
+    <ngx-twitter-timeline style="width: 250px;"
+      [source]="{sourceType: 'url', url: 'https://twitter.com/reactjs'}"
+      [options]="{chrome : ['noheader', 'nofooter'], tweetLimit: 4, height: '400'}" (onLoad)="onLoad($event)">
+    </ngx-twitter-timeline>
+
+  </div>
+</div>
