@@ -1,11 +1,34 @@
 {
   "name": "ngx-twitter-widgets",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "peerDependencies": {
     "@angular/common": "^12.1.0",
     "@angular/core": "^12.1.0"
   },
   "dependencies": {
     "tslib": "^2.2.0"
-  }
+  },
+  "description": "This library was generated with [Angular CLI](https://github.com/angular/angular-cli) version 12.1.0.",
+  "main": " ",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RomikMakavana/ngx-twitter-widgets.git"
+  },
+  "keywords": [
+    "angular",
+    "angular-component",
+    "twitter",
+    "twitter-widgets",
+    "timeline"
+  ],
+  "author": "Romik Makavana",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/RomikMakavana/ngx-twitter-widgets/issues"
+  },
+  "homepage": "https://github.com/RomikMakavana/ngx-twitter-widgets#readme"
 }
