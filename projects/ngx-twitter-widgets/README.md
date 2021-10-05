@@ -6,8 +6,6 @@
 <!-- [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com) [![License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](https://raw.githubusercontent.com/saurabhnemade/react-twitter-embed/master/LICENSE) -->
 
 
-Angular Twitter Widget/Embed Component
-
 Add Twitter Widgets to your angular project
 
 ## Install
