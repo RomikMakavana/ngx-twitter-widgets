@@ -3,8 +3,6 @@ import { TimelineOptions } from './entities/timeline-options';
 import { TimelineSource } from './entities/timeline-source';
 import { NgxTwitterWidgetsService } from './ngx-twitter-widgets.service';
 
-
-
 @Component({
   selector: 'ngx-twitter-timeline',
   template: '',
@@ -29,7 +27,7 @@ export class NgxTwitterTimelineComponent implements AfterViewInit {
     this.loadWidget();
   }
 
-  async loadWidget() {
+  private async loadWidget() {
 
     this.widgetService.loadElement(
       "createTimeline",

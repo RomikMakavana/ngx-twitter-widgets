@@ -1,0 +1,3654 @@
+{
+    "pipes": [],
+    "interfaces": [
+        {
+            "name": "Scripts",
+            "id": "interface-Scripts-e5fda28c2dccc215855d722b1ef20b72",
+            "file": "projects/ngx-twitter-widgets/src/lib/ngx-twitter-widgets.service.ts",
+            "deprecated": false,
+            "deprecationMessage": "",
+            "type": "interface",
+            "sourceCode": "import { ElementRef, Injectable } from '@angular/core';\n\ninterface Scripts {\n  name: string;\n  src: string;\n}\n\nexport const ScriptStore: Scripts[] = [\n  { name: 'twttr', src: 'https://platform.twitter.com/widgets.js' },\n];\n\n@Injectable({\n  providedIn: 'root'\n})\nexport class NgxTwitterWidgetsService {\n\n  private scripts: any = {};\n  private attr: string = \"twElement\";\n  private scriptAttr: string | any = \"twttr\";\n\n  constructor() {\n    ScriptStore.forEach((script: any) => {\n      this.scripts[script.name] = {\n        loaded: false,\n        src: script.src\n      };\n    });\n  }\n  \n  load(...scripts: string[]) {\n    const promises: any[] = [];\n    scripts.forEach((script) => promises.push(this.loadScript(script)));\n    return Promise.all(promises);\n  }\n\n  public get domStatus(): boolean {\n    return !!(\n      typeof window !== \"undefined\" &&\n      window.document &&\n      window.document.createElement\n    )\n  }\n\n  loadScript(name: string) {\n    return new Promise((resolve, reject) => {\n      if (!this.scripts[name].loaded) {\n        //load script\n        let script: any = document.createElement('script');\n        script.type = 'text/javascript';\n        script.src = this.scripts[name].src;\n        if (script.readyState) {  //IE\n          script.onreadystatechange = () => {\n            if (script.readyState === \"loaded\" || script.readyState === \"complete\") {\n              script.onreadystatechange = null;\n              this.scripts[name].loaded = true;\n              resolve({ script: name, loaded: true, status: 'Loaded' });\n            }\n          };\n        } else {  //Others\n          script.onload = () => {\n            this.scripts[name].loaded = true;\n            resolve({ script: name, loaded: true, status: 'Loaded' });\n          };\n        }\n        script.onerror = (error: any) => resolve({ script: name, loaded: false, status: 'Loaded' });\n        document.getElementsByTagName('head')[0].appendChild(script);\n      } else {\n        resolve({ script: name, loaded: true, status: 'Already Loaded' });\n      }\n    });\n  }\n\n  async loadElement(widgetFunction: string, source: object | string, element: ElementRef, options: object, onLoad: Function) {\n    element.nativeElement.querySelectorAll(\"*\").forEach((child: any) => {\n      if (child.hasAttribute(this.attr)) {\n        child.remove();\n      }\n    })\n\n    const childEl = document.createElement(\"div\");\n    childEl.setAttribute(this.attr, \"yes\");\n    element.nativeElement.appendChild(childEl);\n\n    try {\n      const wf: any = await this.twitterWidget();\n\n      const resultMaybe = await wf[widgetFunction](\n        source,\n        childEl,\n        this.getObj(options)\n      );\n\n\n      onLoad({ status: true });\n    } catch (error) {\n      onLoad({ status: false, error });\n      childEl.innerHTML = \"Issue on load Twitter Follow Button.\"\n    }\n  }\n\n  private twitterWidget() {\n    return new Promise((resolve, reject) => {\n      const twttr: any = window[this.scriptAttr];\n      if (!twttr || !twttr.widgets) {\n        reject();\n      }\n      resolve(twttr.widgets);\n    })\n  }\n\n  private getObj(value: any) {\n    return typeof value === \"object\" ? { ...value } : value;\n  }\n\n\n}\n",
+            "properties": [
+                {
+                    "name": "name",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string",
+                    "optional": false,
+                    "description": "",
+                    "line": 4
+                },
+                {
+                    "name": "src",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string",
+                    "optional": false,
+                    "description": "",
+                    "line": 5
+                }
+            ],
+            "indexSignatures": [],
+            "kind": 164,
+            "methods": []
+        }
+    ],
+    "injectables": [
+        {
+            "name": "NgxTwitterWidgetsService",
+            "id": "injectable-NgxTwitterWidgetsService-e5fda28c2dccc215855d722b1ef20b72",
+            "file": "projects/ngx-twitter-widgets/src/lib/ngx-twitter-widgets.service.ts",
+            "properties": [
+                {
+                    "name": "attr",
+                    "defaultValue": "\"twElement\"",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string",
+                    "optional": false,
+                    "description": "",
+                    "line": 18,
+                    "modifierKind": [
+                        121
+                    ]
+                },
+                {
+                    "name": "scriptAttr",
+                    "defaultValue": "\"twttr\"",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string | any",
+                    "optional": false,
+                    "description": "",
+                    "line": 19,
+                    "modifierKind": [
+                        121
+                    ]
+                },
+                {
+                    "name": "scripts",
+                    "defaultValue": "{}",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "any",
+                    "optional": false,
+                    "description": "",
+                    "line": 17,
+                    "modifierKind": [
+                        121
+                    ]
+                }
+            ],
+            "methods": [
+                {
+                    "name": "getObj",
+                    "args": [
+                        {
+                            "name": "value",
+                            "type": "any",
+                            "deprecated": false,
+                            "deprecationMessage": ""
+                        }
+                    ],
+                    "optional": false,
+                    "returnType": "any",
+                    "typeParameters": [],
+                    "line": 111,
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "modifierKind": [
+                        121
+                    ],
+                    "jsdoctags": [
+                        {
+                            "name": "value",
+                            "type": "any",
+                            "deprecated": false,
+                            "deprecationMessage": "",
+                            "tagName": {
+                                "text": "param"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "load",
+                    "args": [
+                        {
+                            "name": "scripts",
+                            "type": "string[]",
+                            "deprecated": false,
+                            "deprecationMessage": "",
+                            "dotDotDotToken": true
+                        }
+                    ],
+                    "optional": false,
+                    "returnType": "any",
+                    "typeParameters": [],
+                    "line": 30,
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "jsdoctags": [
+                        {
+                            "name": "scripts",
+                            "type": "string[]",
+                            "deprecated": false,
+                            "deprecationMessage": "",
+                            "dotDotDotToken": true,
+                            "tagName": {
+                                "text": "param"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "loadElement",
+                    "args": [
+                        {
+                            "name": "widgetFunction",
+                            "type": "string",
+                            "deprecated": false,
+                            "deprecationMessage": ""
+                        },
+                        {
+                            "name": "source",
+                            "type": "object | string",
+                            "deprecated": false,
+                            "deprecationMessage": ""
+                        },
+                        {
+                            "name": "element",
+                            "type": "ElementRef",
+                            "deprecated": false,
+                            "deprecationMessage": ""
+                        },
+                        {
+                            "name": "options",
+                            "type": "object",
+                            "deprecated": false,
+                            "deprecationMessage": ""
+                        },
+                        {
+                            "name": "onLoad",
+                            "type": "Function",
+                            "deprecated": false,
+                            "deprecationMessage": ""
+                        }
+                    ],
+                    "optional": false,
+                    "returnType": "any",
+                    "typeParameters": [],
+                    "line": 73,
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "modifierKind": [
+                        130
+                    ],
+                    "jsdoctags": [
+                        {
+                            "name": "widgetFunction",
+                            "type": "string",
+                            "deprecated": false,
+                            "deprecationMessage": "",
+                            "tagName": {
+                                "text": "param"
+                            }
+                        },
+                        {
+                            "name": "source",
+                            "type": "object | string",
+                            "deprecated": false,
+                            "deprecationMessage": "",
+                            "tagName": {
+                                "text": "param"
+                            }
+                        },
+                        {
+                            "name": "element",
+                            "type": "ElementRef",
+                            "deprecated": false,
+                            "deprecationMessage": "",
+                            "tagName": {
+                                "text": "param"
+                            }
+                        },
+                        {
+                            "name": "options",
+                            "type": "object",
+                            "deprecated": false,
+                            "deprecationMessage": "",
+                            "tagName": {
+                                "text": "param"
+                            }
+                        },
+                        {
+                            "name": "onLoad",
+                            "type": "Function",
+                            "deprecated": false,
+                            "deprecationMessage": "",
+                            "tagName": {
+                                "text": "param"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "loadScript",
+                    "args": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "deprecated": false,
+                            "deprecationMessage": ""
+                        }
+                    ],
+                    "optional": false,
+                    "returnType": "any",
+                    "typeParameters": [],
+                    "line": 44,
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "jsdoctags": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "deprecated": false,
+                            "deprecationMessage": "",
+                            "tagName": {
+                                "text": "param"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "twitterWidget",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "any",
+                    "typeParameters": [],
+                    "line": 101,
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "modifierKind": [
+                        121
+                    ]
+                }
+            ],
+            "deprecated": false,
+            "deprecationMessage": "",
+            "description": "",
+            "rawdescription": "\n",
+            "sourceCode": "import { ElementRef, Injectable } from '@angular/core';\n\ninterface Scripts {\n  name: string;\n  src: string;\n}\n\nexport const ScriptStore: Scripts[] = [\n  { name: 'twttr', src: 'https://platform.twitter.com/widgets.js' },\n];\n\n@Injectable({\n  providedIn: 'root'\n})\nexport class NgxTwitterWidgetsService {\n\n  private scripts: any = {};\n  private attr: string = \"twElement\";\n  private scriptAttr: string | any = \"twttr\";\n\n  constructor() {\n    ScriptStore.forEach((script: any) => {\n      this.scripts[script.name] = {\n        loaded: false,\n        src: script.src\n      };\n    });\n  }\n  \n  load(...scripts: string[]) {\n    const promises: any[] = [];\n    scripts.forEach((script) => promises.push(this.loadScript(script)));\n    return Promise.all(promises);\n  }\n\n  public get domStatus(): boolean {\n    return !!(\n      typeof window !== \"undefined\" &&\n      window.document &&\n      window.document.createElement\n    )\n  }\n\n  loadScript(name: string) {\n    return new Promise((resolve, reject) => {\n      if (!this.scripts[name].loaded) {\n        //load script\n        let script: any = document.createElement('script');\n        script.type = 'text/javascript';\n        script.src = this.scripts[name].src;\n        if (script.readyState) {  //IE\n          script.onreadystatechange = () => {\n            if (script.readyState === \"loaded\" || script.readyState === \"complete\") {\n              script.onreadystatechange = null;\n              this.scripts[name].loaded = true;\n              resolve({ script: name, loaded: true, status: 'Loaded' });\n            }\n          };\n        } else {  //Others\n          script.onload = () => {\n            this.scripts[name].loaded = true;\n            resolve({ script: name, loaded: true, status: 'Loaded' });\n          };\n        }\n        script.onerror = (error: any) => resolve({ script: name, loaded: false, status: 'Loaded' });\n        document.getElementsByTagName('head')[0].appendChild(script);\n      } else {\n        resolve({ script: name, loaded: true, status: 'Already Loaded' });\n      }\n    });\n  }\n\n  async loadElement(widgetFunction: string, source: object | string, element: ElementRef, options: object, onLoad: Function) {\n    element.nativeElement.querySelectorAll(\"*\").forEach((child: any) => {\n      if (child.hasAttribute(this.attr)) {\n        child.remove();\n      }\n    })\n\n    const childEl = document.createElement(\"div\");\n    childEl.setAttribute(this.attr, \"yes\");\n    element.nativeElement.appendChild(childEl);\n\n    try {\n      const wf: any = await this.twitterWidget();\n\n      const resultMaybe = await wf[widgetFunction](\n        source,\n        childEl,\n        this.getObj(options)\n      );\n\n\n      onLoad({ status: true });\n    } catch (error) {\n      onLoad({ status: false, error });\n      childEl.innerHTML = \"Issue on load Twitter Follow Button.\"\n    }\n  }\n\n  private twitterWidget() {\n    return new Promise((resolve, reject) => {\n      const twttr: any = window[this.scriptAttr];\n      if (!twttr || !twttr.widgets) {\n        reject();\n      }\n      resolve(twttr.widgets);\n    })\n  }\n\n  private getObj(value: any) {\n    return typeof value === \"object\" ? { ...value } : value;\n  }\n\n\n}\n",
+            "constructorObj": {
+                "name": "constructor",
+                "description": "",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "args": [],
+                "line": 19
+            },
+            "accessors": {
+                "domStatus": {
+                    "name": "domStatus",
+                    "getSignature": {
+                        "name": "domStatus",
+                        "type": "boolean",
+                        "returnType": "boolean",
+                        "line": 36
+                    }
+                }
+            },
+            "type": "injectable"
+        }
+    ],
+    "guards": [],
+    "interceptors": [],
+    "classes": [
+        {
+            "name": "FollowOptions",
+            "id": "class-FollowOptions-09899682ed1604fc0ee3a430a89eb565",
+            "file": "projects/ngx-twitter-widgets/src/lib/entities/follow-options.ts",
+            "deprecated": false,
+            "deprecationMessage": "",
+            "type": "class",
+            "sourceCode": "export class FollowOptions {\n    screen_name?: string;\n    show_screen_name?: string;\n    show_count?: string;\n    size?: string;\n    lang?: string;\n    dnt?: string;\n}\n",
+            "properties": [
+                {
+                    "name": "dnt",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string",
+                    "optional": true,
+                    "description": "",
+                    "line": 7
+                },
+                {
+                    "name": "lang",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string",
+                    "optional": true,
+                    "description": "",
+                    "line": 6
+                },
+                {
+                    "name": "screen_name",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string",
+                    "optional": true,
+                    "description": "",
+                    "line": 2
+                },
+                {
+                    "name": "show_count",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string",
+                    "optional": true,
+                    "description": "",
+                    "line": 4
+                },
+                {
+                    "name": "show_screen_name",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string",
+                    "optional": true,
+                    "description": "",
+                    "line": 3
+                },
+                {
+                    "name": "size",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string",
+                    "optional": true,
+                    "description": "",
+                    "line": 5
+                }
+            ],
+            "methods": [],
+            "indexSignatures": [],
+            "inputsClass": [],
+            "outputsClass": [],
+            "hostBindings": [],
+            "hostListeners": []
+        },
+        {
+            "name": "HashtagOptions",
+            "id": "class-HashtagOptions-fdf4917e800b18bdaf3bde50ce70553a",
+            "file": "projects/ngx-twitter-widgets/src/lib/entities/hashtag-options.ts",
+            "deprecated": false,
+            "deprecationMessage": "",
+            "type": "class",
+            "sourceCode": "export class HashtagOptions {\n    text?: string;\n    url?: string;\n    hashtags?: string;\n    via?: string;\n    related?: string;\n    size?: string\n    lang?: string;\n    dnt?: boolean;\n}\n",
+            "properties": [
+                {
+                    "name": "dnt",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "boolean",
+                    "optional": true,
+                    "description": "",
+                    "line": 9
+                },
+                {
+                    "name": "hashtags",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string",
+                    "optional": true,
+                    "description": "",
+                    "line": 4
+                },
+                {
+                    "name": "lang",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string",
+                    "optional": true,
+                    "description": "",
+                    "line": 8
+                },
+                {
+                    "name": "related",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string",
+                    "optional": true,
+                    "description": "",
+                    "line": 6
+                },
+                {
+                    "name": "size",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string",
+                    "optional": true,
+                    "description": "",
+                    "line": 7
+                },
+                {
+                    "name": "text",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string",
+                    "optional": true,
+                    "description": "",
+                    "line": 2
+                },
+                {
+                    "name": "url",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string",
+                    "optional": true,
+                    "description": "",
+                    "line": 3
+                },
+                {
+                    "name": "via",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string",
+                    "optional": true,
+                    "description": "",
+                    "line": 5
+                }
+            ],
+            "methods": [],
+            "indexSignatures": [],
+            "inputsClass": [],
+            "outputsClass": [],
+            "hostBindings": [],
+            "hostListeners": []
+        },
+        {
+            "name": "TimelineOptions",
+            "id": "class-TimelineOptions-a87f449c94145ddbaf4855ff04affe7a",
+            "file": "projects/ngx-twitter-widgets/src/lib/entities/timeline-options.ts",
+            "deprecated": false,
+            "deprecationMessage": "",
+            "type": "class",
+            "sourceCode": "enum ChromeOptions { \"noheader\", \"nofooter\", \"noborders\", \"transparent\", \"noscrollbar\" }\nenum ThemeOptions { \"dark\", \"light\" }\nenum AreaPoliteOptions { \"polite\", \"assertive\", \"rude\" }\nexport class TimelineOptions {\n    chrome?: string[] | ChromeOptions[];\n    width?: string | any;\n    height?: string | any;\n    tweetLimit?: number;\n    borderColor?: string;\n    theme?: ThemeOptions | string;\n    ariaPolite?: string[] | AreaPoliteOptions[];\n    dnt?: boolean;\n}\n",
+            "properties": [
+                {
+                    "name": "ariaPolite",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string[] | AreaPoliteOptions[]",
+                    "optional": true,
+                    "description": "",
+                    "line": 11
+                },
+                {
+                    "name": "borderColor",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string",
+                    "optional": true,
+                    "description": "",
+                    "line": 9
+                },
+                {
+                    "name": "chrome",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string[] | ChromeOptions[]",
+                    "optional": true,
+                    "description": "",
+                    "line": 5
+                },
+                {
+                    "name": "dnt",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "boolean",
+                    "optional": true,
+                    "description": "",
+                    "line": 12
+                },
+                {
+                    "name": "height",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string | any",
+                    "optional": true,
+                    "description": "",
+                    "line": 7
+                },
+                {
+                    "name": "theme",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "ThemeOptions | string",
+                    "optional": true,
+                    "description": "",
+                    "line": 10
+                },
+                {
+                    "name": "tweetLimit",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "number",
+                    "optional": true,
+                    "description": "",
+                    "line": 8
+                },
+                {
+                    "name": "width",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string | any",
+                    "optional": true,
+                    "description": "",
+                    "line": 6
+                }
+            ],
+            "methods": [],
+            "indexSignatures": [],
+            "inputsClass": [],
+            "outputsClass": [],
+            "hostBindings": [],
+            "hostListeners": []
+        },
+        {
+            "name": "TimelineSource",
+            "id": "class-TimelineSource-e3280c223c8d2dcfd313ffa84ea89592",
+            "file": "projects/ngx-twitter-widgets/src/lib/entities/timeline-source.ts",
+            "deprecated": false,
+            "deprecationMessage": "",
+            "type": "class",
+            "sourceCode": "enum SourceType { \"profile\", \"list\", \"collection\", \"likes\" }\n\nexport class TimelineSource {\n    sourceType: SourceType|string;\n    screenName?: string;\n    ownerScreenName?: string;\n    slug?: string;\n    url?: string;\n}\n",
+            "properties": [
+                {
+                    "name": "ownerScreenName",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string",
+                    "optional": true,
+                    "description": "",
+                    "line": 6
+                },
+                {
+                    "name": "screenName",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string",
+                    "optional": true,
+                    "description": "",
+                    "line": 5
+                },
+                {
+                    "name": "slug",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string",
+                    "optional": true,
+                    "description": "",
+                    "line": 7
+                },
+                {
+                    "name": "sourceType",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "SourceType | string",
+                    "optional": false,
+                    "description": "",
+                    "line": 4
+                },
+                {
+                    "name": "url",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string",
+                    "optional": true,
+                    "description": "",
+                    "line": 8
+                }
+            ],
+            "methods": [],
+            "indexSignatures": [],
+            "inputsClass": [],
+            "outputsClass": [],
+            "hostBindings": [],
+            "hostListeners": []
+        },
+        {
+            "name": "TweetOption",
+            "id": "class-TweetOption-88e5038bf5886c455f4a384020b0ffac",
+            "file": "projects/ngx-twitter-widgets/src/lib/entities/tweet-option.ts",
+            "deprecated": false,
+            "deprecationMessage": "",
+            "type": "class",
+            "sourceCode": "export class TweetOption {\n    id?: string;\n    cards?: string;\n    conversation?: string;\n    theme?: string;\n    width?: string;\n    align?: string;\n    lang?: string;\n    dnt?: boolean;\n}\n",
+            "properties": [
+                {
+                    "name": "align",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string",
+                    "optional": true,
+                    "description": "",
+                    "line": 7
+                },
+                {
+                    "name": "cards",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string",
+                    "optional": true,
+                    "description": "",
+                    "line": 3
+                },
+                {
+                    "name": "conversation",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string",
+                    "optional": true,
+                    "description": "",
+                    "line": 4
+                },
+                {
+                    "name": "dnt",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "boolean",
+                    "optional": true,
+                    "description": "",
+                    "line": 9
+                },
+                {
+                    "name": "id",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string",
+                    "optional": true,
+                    "description": "",
+                    "line": 2
+                },
+                {
+                    "name": "lang",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string",
+                    "optional": true,
+                    "description": "",
+                    "line": 8
+                },
+                {
+                    "name": "theme",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string",
+                    "optional": true,
+                    "description": "",
+                    "line": 5
+                },
+                {
+                    "name": "width",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string",
+                    "optional": true,
+                    "description": "",
+                    "line": 6
+                }
+            ],
+            "methods": [],
+            "indexSignatures": [],
+            "inputsClass": [],
+            "outputsClass": [],
+            "hostBindings": [],
+            "hostListeners": []
+        }
+    ],
+    "directives": [],
+    "components": [
+        {
+            "name": "AppComponent",
+            "id": "component-AppComponent-45ea843da146f9ea80ca954d1900187c",
+            "file": "projects/angular-twitter-widgets-test/src/app/app.component.ts",
+            "encapsulation": [],
+            "entryComponents": [],
+            "inputs": [],
+            "outputs": [],
+            "providers": [],
+            "selector": "app-root",
+            "styleUrls": [
+                "./app.component.css"
+            ],
+            "styles": [],
+            "templateUrl": [
+                "./app.component.html"
+            ],
+            "viewProviders": [],
+            "inputsClass": [],
+            "outputsClass": [],
+            "propertiesClass": [
+                {
+                    "name": "title",
+                    "defaultValue": "'angular-twitter-widgets-test'",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string",
+                    "optional": false,
+                    "description": "",
+                    "line": 9
+                }
+            ],
+            "methodsClass": [
+                {
+                    "name": "onLoad",
+                    "args": [
+                        {
+                            "name": "res",
+                            "type": "any",
+                            "deprecated": false,
+                            "deprecationMessage": ""
+                        }
+                    ],
+                    "optional": false,
+                    "returnType": "void",
+                    "typeParameters": [],
+                    "line": 11,
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "jsdoctags": [
+                        {
+                            "name": "res",
+                            "type": "any",
+                            "deprecated": false,
+                            "deprecationMessage": "",
+                            "tagName": {
+                                "text": "param"
+                            }
+                        }
+                    ]
+                }
+            ],
+            "deprecated": false,
+            "deprecationMessage": "",
+            "hostBindings": [],
+            "hostListeners": [],
+            "description": "",
+            "rawdescription": "\n",
+            "type": "component",
+            "sourceCode": "import { Component } from '@angular/core';\n\n@Component({\n  selector: 'app-root',\n  templateUrl: './app.component.html',\n  styleUrls: ['./app.component.css']\n})\nexport class AppComponent {\n  title = 'angular-twitter-widgets-test';\n\n  onLoad(res: any){\n    console.log(res);\n  }\n}\n",
+            "assetsDirs": [],
+            "styleUrlsData": [
+                {
+                    "data": "",
+                    "styleUrl": "./app.component.css"
+                }
+            ],
+            "stylesData": "",
+            "templateData": "<div>\n  <div style=\"display: flex;\">\n    <ngx-twitter-tweet style=\"width: 250px;\"\n      [tweetID]=\"'20'\"\n      (onLoad)=\"onLoad($event)\">\n    </ngx-twitter-tweet>\n    <ngx-twitter-tweet style=\"width: 250px;\"\n      [tweetID]=\"'20'\"\n      [options]=\"{ size: 'large', text: 'I am Romik Makavana' }\" (onLoad)=\"onLoad($event)\">\n    </ngx-twitter-tweet>\n    \n  </div>\n  <div style=\"display: flex;\">\n    <ngx-twitter-share style=\"width: 250px;\"\n      [url]=\"'/'\"\n      (onLoad)=\"onLoad($event)\">\n    </ngx-twitter-share>\n    <ngx-twitter-share style=\"width: 250px;\"\n      [url]=\"'https://andrewsuzuki.github.io/react-twitter-widgets/?path=/story/mention--default-text'\"\n      [options]=\"{ size: 'large', text: 'I am Romik Makavana' }\" (onLoad)=\"onLoad($event)\">\n    </ngx-twitter-share>\n    \n  </div>\n  <div style=\"display: flex;\">\n    <ngx-twitter-hashtag style=\"width: 250px;\"\n      [hashtag]=\"'twitterdev'\"\n      (onLoad)=\"onLoad($event)\">\n    </ngx-twitter-hashtag>\n    <ngx-twitter-hashtag style=\"width: 250px;\"\n      [hashtag]=\"'twitterdev'\"\n      [options]=\"{ size: 'large' }\" (onLoad)=\"onLoad($event)\">\n    </ngx-twitter-hashtag>\n    \n  </div>\n  <div style=\"display: flex;\">\n    <ngx-twitter-mention style=\"width: 250px;\"\n      [username]=\"'twitterdev'\"\n      (onLoad)=\"onLoad($event)\">\n    </ngx-twitter-mention>\n    <ngx-twitter-mention style=\"width: 250px;\"\n      [username]=\"'twitterdev'\"\n      [options]=\"{ size: 'large' }\" (onLoad)=\"onLoad($event)\">\n    </ngx-twitter-mention>\n    \n  </div>\n  <div style=\"display: flex;\">\n    <ngx-twitter-follow style=\"width: 250px;\"\n      [username]=\"'twitterdev'\"\n      (onLoad)=\"onLoad($event)\">\n    </ngx-twitter-follow>\n    <ngx-twitter-follow style=\"width: 250px;\"\n      [username]=\"'twitterdev'\"\n      [options]=\"{ size: 'large' }\" (onLoad)=\"onLoad($event)\">\n    </ngx-twitter-follow>\n    \n  </div>\n\n  <div style=\"display: flex;\">\n\n    <ngx-twitter-timeline style=\"width: 250px;\"\n      [source]=\"{sourceType: 'list', ownerScreenName: 'twitterdev', slug: 'national-parks'}\"\n      [options]=\"{chrome : ['noheader', 'nofooter'], height: '400'}\" (onLoad)=\"onLoad($event)\">\n    </ngx-twitter-timeline>\n    \n    <ngx-twitter-timeline style=\"width: 250px;\"\n      [source]=\"{sourceType: 'profile', screenName: 'GDGIndia', slug: 'national-parks'}\"\n      [options]=\"{chrome : [], borderColor: '#292F33', height: '400'}\" (onLoad)=\"onLoad($event)\">\n    </ngx-twitter-timeline>\n\n    <ngx-twitter-timeline style=\"width: 250px;\"\n      [source]=\"{sourceType: 'collection', id: '539487832448843776'}\"\n      [options]=\"{chrome : ['noheader', 'nofooter'], theme: 'dark', height: '400'}\" (onLoad)=\"onLoad($event)\">\n    </ngx-twitter-timeline>\n\n    <ngx-twitter-timeline style=\"width: 250px;\"\n      [source]=\"{sourceType: 'url', url: 'https://twitter.com/reactjs'}\"\n      [options]=\"{chrome : ['noheader', 'nofooter'], tweetLimit: 4, height: '400'}\" (onLoad)=\"onLoad($event)\">\n    </ngx-twitter-timeline>\n\n  </div>\n</div>"
+        },
+        {
+            "name": "NgxTwitterFollowComponent",
+            "id": "component-NgxTwitterFollowComponent-d5ab8b90977e279fa16bd3605f0c00d3",
+            "file": "projects/ngx-twitter-widgets/src/lib/ngx-twitter-follow.component.ts",
+            "encapsulation": [],
+            "entryComponents": [],
+            "inputs": [],
+            "outputs": [],
+            "providers": [],
+            "selector": "ngx-twitter-follow",
+            "styleUrls": [],
+            "styles": [],
+            "template": "",
+            "templateUrl": [],
+            "viewProviders": [],
+            "inputsClass": [
+                {
+                    "name": "options",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "line": 12,
+                    "type": "FollowOptions | object"
+                },
+                {
+                    "name": "username",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "line": 11,
+                    "type": "string"
+                }
+            ],
+            "outputsClass": [
+                {
+                    "name": "onLoad",
+                    "defaultValue": "new EventEmitter()",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "line": 13,
+                    "type": "EventEmitter<any>"
+                }
+            ],
+            "propertiesClass": [
+                {
+                    "name": "attr",
+                    "defaultValue": "\"twElement\"",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string",
+                    "optional": false,
+                    "description": "",
+                    "line": 16,
+                    "modifierKind": [
+                        121
+                    ]
+                },
+                {
+                    "name": "error",
+                    "defaultValue": "false",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "boolean",
+                    "optional": false,
+                    "description": "",
+                    "line": 18,
+                    "modifierKind": [
+                        121
+                    ]
+                },
+                {
+                    "name": "scriptAttr",
+                    "defaultValue": "\"twttr\"",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string | any",
+                    "optional": false,
+                    "description": "",
+                    "line": 17,
+                    "modifierKind": [
+                        121
+                    ]
+                },
+                {
+                    "name": "widgetService",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "NgxTwitterWidgetsService",
+                    "optional": false,
+                    "description": "",
+                    "line": 21,
+                    "modifierKind": [
+                        123
+                    ]
+                }
+            ],
+            "methodsClass": [
+                {
+                    "name": "loadScript",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "unknown",
+                    "typeParameters": [],
+                    "line": 42,
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "modifierKind": [
+                        121,
+                        130
+                    ]
+                },
+                {
+                    "name": "loadWidget",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "any",
+                    "typeParameters": [],
+                    "line": 29,
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "modifierKind": [
+                        130
+                    ]
+                },
+                {
+                    "name": "ngAfterViewInit",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "any",
+                    "typeParameters": [],
+                    "line": 24,
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "modifierKind": [
+                        130
+                    ]
+                }
+            ],
+            "deprecated": false,
+            "deprecationMessage": "",
+            "hostBindings": [],
+            "hostListeners": [],
+            "description": "",
+            "rawdescription": "\n",
+            "type": "component",
+            "sourceCode": "import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output } from '@angular/core';\nimport { FollowOptions } from './entities/follow-options';\nimport { NgxTwitterWidgetsService } from './ngx-twitter-widgets.service';\n\n@Component({\n  selector: 'ngx-twitter-follow',\n  template: ''\n})\nexport class NgxTwitterFollowComponent implements AfterViewInit {\n\n  @Input() username: string;\n  @Input() options: FollowOptions|object;\n  @Output() onLoad: EventEmitter<any> = new EventEmitter();\n\n\n  private attr: string = \"twElement\";\n  private scriptAttr: string | any = \"twttr\";\n  private error: boolean = false;\n  constructor(\n    private element: ElementRef,\n    public widgetService: NgxTwitterWidgetsService\n  ) { }\n\n  async ngAfterViewInit() {\n    await this.loadScript();\n    this.loadWidget();\n  }\n\n  async loadWidget() {\n\n    this.widgetService.loadElement(\n      \"createFollowButton\",\n      this.username,\n      this.element,\n      this.options,\n      (response: object) => {\n        this.onLoad.emit(response);\n      }\n    )\n  }\n\n  private async loadScript() {\n    return new Promise((resolve, reject) => {\n      this.widgetService.load(this.scriptAttr)\n        .then(data => { resolve(true); console.log(\"Script loaded successfully,\"); })\n        .catch(err => { reject(); console.log(\"Script load issue,\") })\n    })\n  }\n}\n",
+            "assetsDirs": [],
+            "styleUrlsData": "",
+            "stylesData": "",
+            "constructorObj": {
+                "name": "constructor",
+                "description": "",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "args": [
+                    {
+                        "name": "element",
+                        "type": "ElementRef",
+                        "deprecated": false,
+                        "deprecationMessage": ""
+                    },
+                    {
+                        "name": "widgetService",
+                        "type": "NgxTwitterWidgetsService",
+                        "deprecated": false,
+                        "deprecationMessage": ""
+                    }
+                ],
+                "line": 18,
+                "jsdoctags": [
+                    {
+                        "name": "element",
+                        "type": "ElementRef",
+                        "deprecated": false,
+                        "deprecationMessage": "",
+                        "tagName": {
+                            "text": "param"
+                        }
+                    },
+                    {
+                        "name": "widgetService",
+                        "type": "NgxTwitterWidgetsService",
+                        "deprecated": false,
+                        "deprecationMessage": "",
+                        "tagName": {
+                            "text": "param"
+                        }
+                    }
+                ]
+            },
+            "implements": [
+                "AfterViewInit"
+            ]
+        },
+        {
+            "name": "NgxTwitterHashtagComponent",
+            "id": "component-NgxTwitterHashtagComponent-9afc3ef51312df8f9d3af99780be2c69",
+            "file": "projects/ngx-twitter-widgets/src/lib/ngx-twitter-hashtag.component.ts",
+            "encapsulation": [],
+            "entryComponents": [],
+            "inputs": [],
+            "outputs": [],
+            "providers": [],
+            "selector": "ngx-twitter-hashtag",
+            "styleUrls": [],
+            "styles": [],
+            "template": "",
+            "templateUrl": [],
+            "viewProviders": [],
+            "inputsClass": [
+                {
+                    "name": "hashtag",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "line": 11,
+                    "type": "string"
+                },
+                {
+                    "name": "options",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "line": 12,
+                    "type": "HashtagOptions | object"
+                }
+            ],
+            "outputsClass": [
+                {
+                    "name": "onLoad",
+                    "defaultValue": "new EventEmitter()",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "line": 13,
+                    "type": "EventEmitter<any>"
+                }
+            ],
+            "propertiesClass": [
+                {
+                    "name": "attr",
+                    "defaultValue": "\"twElement\"",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string",
+                    "optional": false,
+                    "description": "",
+                    "line": 15,
+                    "modifierKind": [
+                        121
+                    ]
+                },
+                {
+                    "name": "error",
+                    "defaultValue": "false",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "boolean",
+                    "optional": false,
+                    "description": "",
+                    "line": 17,
+                    "modifierKind": [
+                        121
+                    ]
+                },
+                {
+                    "name": "scriptAttr",
+                    "defaultValue": "\"twttr\"",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string | any",
+                    "optional": false,
+                    "description": "",
+                    "line": 16,
+                    "modifierKind": [
+                        121
+                    ]
+                },
+                {
+                    "name": "widgetService",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "NgxTwitterWidgetsService",
+                    "optional": false,
+                    "description": "",
+                    "line": 20,
+                    "modifierKind": [
+                        123
+                    ]
+                }
+            ],
+            "methodsClass": [
+                {
+                    "name": "loadScript",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "unknown",
+                    "typeParameters": [],
+                    "line": 40,
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "modifierKind": [
+                        121,
+                        130
+                    ]
+                },
+                {
+                    "name": "loadWidget",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "any",
+                    "typeParameters": [],
+                    "line": 28,
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "modifierKind": [
+                        130
+                    ]
+                },
+                {
+                    "name": "ngAfterViewInit",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "any",
+                    "typeParameters": [],
+                    "line": 23,
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "modifierKind": [
+                        130
+                    ]
+                }
+            ],
+            "deprecated": false,
+            "deprecationMessage": "",
+            "hostBindings": [],
+            "hostListeners": [],
+            "description": "",
+            "rawdescription": "\n",
+            "type": "component",
+            "sourceCode": "import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output } from '@angular/core';\nimport { HashtagOptions } from './entities/hashtag-options';\nimport { NgxTwitterWidgetsService } from './ngx-twitter-widgets.service';\n\n@Component({\n  selector: 'ngx-twitter-hashtag',\n  template: ''\n})\nexport class NgxTwitterHashtagComponent implements AfterViewInit {\n\n  @Input() hashtag: string;\n  @Input() options: HashtagOptions|object;\n  @Output() onLoad: EventEmitter<any> = new EventEmitter();\n\n  private attr: string = \"twElement\";\n  private scriptAttr: string | any = \"twttr\";\n  private error: boolean = false;\n  constructor(\n    private element: ElementRef,\n    public widgetService: NgxTwitterWidgetsService\n  ) { }\n\n  async ngAfterViewInit() {\n    await this.loadScript();\n    this.loadWidget();\n  }\n\n  async loadWidget() {\n    this.widgetService.loadElement(\n      \"createHashtagButton\",\n      this.hashtag,\n      this.element,\n      this.options,\n      (response: object) => {\n        this.onLoad.emit(response);\n      }\n    )\n  }\n\n  private async loadScript() {\n    return new Promise((resolve, reject) => {\n      this.widgetService.load(this.scriptAttr)\n        .then(data => { resolve(true); console.log(\"Script loaded successfully,\"); })\n        .catch(err => { reject(); console.log(\"Script load issue,\") })\n    })\n  }\n\n}\n",
+            "assetsDirs": [],
+            "styleUrlsData": "",
+            "stylesData": "",
+            "constructorObj": {
+                "name": "constructor",
+                "description": "",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "args": [
+                    {
+                        "name": "element",
+                        "type": "ElementRef",
+                        "deprecated": false,
+                        "deprecationMessage": ""
+                    },
+                    {
+                        "name": "widgetService",
+                        "type": "NgxTwitterWidgetsService",
+                        "deprecated": false,
+                        "deprecationMessage": ""
+                    }
+                ],
+                "line": 17,
+                "jsdoctags": [
+                    {
+                        "name": "element",
+                        "type": "ElementRef",
+                        "deprecated": false,
+                        "deprecationMessage": "",
+                        "tagName": {
+                            "text": "param"
+                        }
+                    },
+                    {
+                        "name": "widgetService",
+                        "type": "NgxTwitterWidgetsService",
+                        "deprecated": false,
+                        "deprecationMessage": "",
+                        "tagName": {
+                            "text": "param"
+                        }
+                    }
+                ]
+            },
+            "implements": [
+                "AfterViewInit"
+            ]
+        },
+        {
+            "name": "NgxTwitterMentionComponent",
+            "id": "component-NgxTwitterMentionComponent-fa4f81b1fa0748864709db09bd0f4413",
+            "file": "projects/ngx-twitter-widgets/src/lib/ngx-twitter-mention.component.ts",
+            "encapsulation": [],
+            "entryComponents": [],
+            "inputs": [],
+            "outputs": [],
+            "providers": [],
+            "selector": "ngx-twitter-mention",
+            "styleUrls": [],
+            "styles": [],
+            "template": "",
+            "templateUrl": [],
+            "viewProviders": [],
+            "inputsClass": [
+                {
+                    "name": "options",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "line": 13,
+                    "type": "FollowOptions | object"
+                },
+                {
+                    "name": "username",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "line": 12,
+                    "type": "string"
+                }
+            ],
+            "outputsClass": [
+                {
+                    "name": "onLoad",
+                    "defaultValue": "new EventEmitter()",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "line": 14,
+                    "type": "EventEmitter<any>"
+                }
+            ],
+            "propertiesClass": [
+                {
+                    "name": "attr",
+                    "defaultValue": "\"twElement\"",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string",
+                    "optional": false,
+                    "description": "",
+                    "line": 17,
+                    "modifierKind": [
+                        121
+                    ]
+                },
+                {
+                    "name": "error",
+                    "defaultValue": "false",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "boolean",
+                    "optional": false,
+                    "description": "",
+                    "line": 19,
+                    "modifierKind": [
+                        121
+                    ]
+                },
+                {
+                    "name": "scriptAttr",
+                    "defaultValue": "\"twttr\"",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string | any",
+                    "optional": false,
+                    "description": "",
+                    "line": 18,
+                    "modifierKind": [
+                        121
+                    ]
+                },
+                {
+                    "name": "widgetService",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "NgxTwitterWidgetsService",
+                    "optional": false,
+                    "description": "",
+                    "line": 22,
+                    "modifierKind": [
+                        123
+                    ]
+                }
+            ],
+            "methodsClass": [
+                {
+                    "name": "loadScript",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "unknown",
+                    "typeParameters": [],
+                    "line": 43,
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "modifierKind": [
+                        121,
+                        130
+                    ]
+                },
+                {
+                    "name": "loadWidget",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "any",
+                    "typeParameters": [],
+                    "line": 30,
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "modifierKind": [
+                        130
+                    ]
+                },
+                {
+                    "name": "ngAfterViewInit",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "any",
+                    "typeParameters": [],
+                    "line": 25,
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "modifierKind": [
+                        130
+                    ]
+                }
+            ],
+            "deprecated": false,
+            "deprecationMessage": "",
+            "hostBindings": [],
+            "hostListeners": [],
+            "description": "",
+            "rawdescription": "\n",
+            "type": "component",
+            "sourceCode": "import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output } from '@angular/core';\nimport { FollowOptions } from './entities/follow-options';\nimport { NgxTwitterWidgetsService } from './ngx-twitter-widgets.service';\n\n@Component({\n  selector: 'ngx-twitter-mention',\n  template: ''\n})\nexport class NgxTwitterMentionComponent implements AfterViewInit {\n\n  \n  @Input() username: string;\n  @Input() options: FollowOptions|object;\n  @Output() onLoad: EventEmitter<any> = new EventEmitter();\n\n\n  private attr: string = \"twElement\";\n  private scriptAttr: string | any = \"twttr\";\n  private error: boolean = false;\n  constructor(\n    private element: ElementRef,\n    public widgetService: NgxTwitterWidgetsService\n  ) { }\n\n  async ngAfterViewInit() {\n    await this.loadScript();\n    this.loadWidget();\n  }\n\n  async loadWidget() {\n\n    this.widgetService.loadElement(\n      \"createMentionButton\",\n      this.username,\n      this.element,\n      this.options,\n      (response: object) => {\n        this.onLoad.emit(response);\n      }\n    )\n  }\n\n  private async loadScript() {\n    return new Promise((resolve, reject) => {\n      this.widgetService.load(this.scriptAttr)\n        .then(data => { resolve(true); console.log(\"Script loaded successfully,\"); })\n        .catch(err => { reject(); console.log(\"Script load issue,\") })\n    })\n  }\n\n}\n",
+            "assetsDirs": [],
+            "styleUrlsData": "",
+            "stylesData": "",
+            "constructorObj": {
+                "name": "constructor",
+                "description": "",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "args": [
+                    {
+                        "name": "element",
+                        "type": "ElementRef",
+                        "deprecated": false,
+                        "deprecationMessage": ""
+                    },
+                    {
+                        "name": "widgetService",
+                        "type": "NgxTwitterWidgetsService",
+                        "deprecated": false,
+                        "deprecationMessage": ""
+                    }
+                ],
+                "line": 19,
+                "jsdoctags": [
+                    {
+                        "name": "element",
+                        "type": "ElementRef",
+                        "deprecated": false,
+                        "deprecationMessage": "",
+                        "tagName": {
+                            "text": "param"
+                        }
+                    },
+                    {
+                        "name": "widgetService",
+                        "type": "NgxTwitterWidgetsService",
+                        "deprecated": false,
+                        "deprecationMessage": "",
+                        "tagName": {
+                            "text": "param"
+                        }
+                    }
+                ]
+            },
+            "implements": [
+                "AfterViewInit"
+            ]
+        },
+        {
+            "name": "NgxTwitterShareComponent",
+            "id": "component-NgxTwitterShareComponent-da1fcdcc3ef86fbf6ed4c074b3196bdb",
+            "file": "projects/ngx-twitter-widgets/src/lib/ngx-twitter-share.component.ts",
+            "encapsulation": [],
+            "entryComponents": [],
+            "inputs": [],
+            "outputs": [],
+            "providers": [],
+            "selector": "ngx-twitter-share",
+            "styleUrls": [],
+            "styles": [],
+            "template": "",
+            "templateUrl": [],
+            "viewProviders": [],
+            "inputsClass": [
+                {
+                    "name": "options",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "line": 13,
+                    "type": "HashtagOptions | object"
+                },
+                {
+                    "name": "url",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "line": 12,
+                    "type": "string"
+                }
+            ],
+            "outputsClass": [
+                {
+                    "name": "onLoad",
+                    "defaultValue": "new EventEmitter()",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "line": 14,
+                    "type": "EventEmitter<any>"
+                }
+            ],
+            "propertiesClass": [
+                {
+                    "name": "attr",
+                    "defaultValue": "\"twElement\"",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string",
+                    "optional": false,
+                    "description": "",
+                    "line": 16,
+                    "modifierKind": [
+                        121
+                    ]
+                },
+                {
+                    "name": "error",
+                    "defaultValue": "false",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "boolean",
+                    "optional": false,
+                    "description": "",
+                    "line": 18,
+                    "modifierKind": [
+                        121
+                    ]
+                },
+                {
+                    "name": "scriptAttr",
+                    "defaultValue": "\"twttr\"",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string | any",
+                    "optional": false,
+                    "description": "",
+                    "line": 17,
+                    "modifierKind": [
+                        121
+                    ]
+                },
+                {
+                    "name": "widgetService",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "NgxTwitterWidgetsService",
+                    "optional": false,
+                    "description": "",
+                    "line": 21,
+                    "modifierKind": [
+                        123
+                    ]
+                }
+            ],
+            "methodsClass": [
+                {
+                    "name": "loadScript",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "unknown",
+                    "typeParameters": [],
+                    "line": 41,
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "modifierKind": [
+                        121,
+                        130
+                    ]
+                },
+                {
+                    "name": "loadWidget",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "any",
+                    "typeParameters": [],
+                    "line": 29,
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "modifierKind": [
+                        130
+                    ]
+                },
+                {
+                    "name": "ngAfterViewInit",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "any",
+                    "typeParameters": [],
+                    "line": 24,
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "modifierKind": [
+                        130
+                    ]
+                }
+            ],
+            "deprecated": false,
+            "deprecationMessage": "",
+            "hostBindings": [],
+            "hostListeners": [],
+            "description": "",
+            "rawdescription": "\n",
+            "type": "component",
+            "sourceCode": "import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output } from '@angular/core';\nimport { HashtagOptions } from './entities/hashtag-options';\nimport { NgxTwitterWidgetsService } from './ngx-twitter-widgets.service';\n\n@Component({\n  selector: 'ngx-twitter-share',\n  template: ''\n})\nexport class NgxTwitterShareComponent implements AfterViewInit {\n\n \n  @Input() url: string;\n  @Input() options: HashtagOptions|object;\n  @Output() onLoad: EventEmitter<any> = new EventEmitter();\n\n  private attr: string = \"twElement\";\n  private scriptAttr: string | any = \"twttr\";\n  private error: boolean = false;\n  constructor(\n    private element: ElementRef,\n    public widgetService: NgxTwitterWidgetsService\n  ) { }\n\n  async ngAfterViewInit() {\n    await this.loadScript();\n    this.loadWidget();\n  }\n\n  async loadWidget() {\n    this.widgetService.loadElement(\n      \"createShareButton\",\n      this.url,\n      this.element,\n      this.options,\n      (response: object) => {\n        this.onLoad.emit(response);\n      }\n    )\n  }\n\n  private async loadScript() {\n    return new Promise((resolve, reject) => {\n      this.widgetService.load(this.scriptAttr)\n        .then(data => { resolve(true); console.log(\"Script loaded successfully,\"); })\n        .catch(err => { reject(); console.log(\"Script load issue,\") })\n    })\n  }\n\n}\n",
+            "assetsDirs": [],
+            "styleUrlsData": "",
+            "stylesData": "",
+            "constructorObj": {
+                "name": "constructor",
+                "description": "",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "args": [
+                    {
+                        "name": "element",
+                        "type": "ElementRef",
+                        "deprecated": false,
+                        "deprecationMessage": ""
+                    },
+                    {
+                        "name": "widgetService",
+                        "type": "NgxTwitterWidgetsService",
+                        "deprecated": false,
+                        "deprecationMessage": ""
+                    }
+                ],
+                "line": 18,
+                "jsdoctags": [
+                    {
+                        "name": "element",
+                        "type": "ElementRef",
+                        "deprecated": false,
+                        "deprecationMessage": "",
+                        "tagName": {
+                            "text": "param"
+                        }
+                    },
+                    {
+                        "name": "widgetService",
+                        "type": "NgxTwitterWidgetsService",
+                        "deprecated": false,
+                        "deprecationMessage": "",
+                        "tagName": {
+                            "text": "param"
+                        }
+                    }
+                ]
+            },
+            "implements": [
+                "AfterViewInit"
+            ]
+        },
+        {
+            "name": "NgxTwitterTimelineComponent",
+            "id": "component-NgxTwitterTimelineComponent-a07640a71e8a0bbd1a9362b57d13d23e",
+            "file": "projects/ngx-twitter-widgets/src/lib/ngx-twitter-timeline.component.ts",
+            "encapsulation": [],
+            "entryComponents": [],
+            "inputs": [],
+            "outputs": [],
+            "providers": [],
+            "selector": "ngx-twitter-timeline",
+            "styleUrls": [],
+            "styles": [],
+            "template": "",
+            "templateUrl": [],
+            "viewProviders": [],
+            "inputsClass": [
+                {
+                    "name": "options",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "line": 14,
+                    "type": "TimelineOptions | object"
+                },
+                {
+                    "name": "source",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "line": 13,
+                    "type": "TimelineSource | object"
+                }
+            ],
+            "outputsClass": [
+                {
+                    "name": "onLoad",
+                    "defaultValue": "new EventEmitter()",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "line": 15,
+                    "type": "EventEmitter<any>"
+                }
+            ],
+            "propertiesClass": [
+                {
+                    "name": "error",
+                    "defaultValue": "false",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "boolean",
+                    "optional": false,
+                    "description": "",
+                    "line": 19,
+                    "modifierKind": [
+                        121
+                    ]
+                },
+                {
+                    "name": "scriptAttr",
+                    "defaultValue": "\"twttr\"",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string | any",
+                    "optional": false,
+                    "description": "",
+                    "line": 18,
+                    "modifierKind": [
+                        121
+                    ]
+                },
+                {
+                    "name": "widgetService",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "NgxTwitterWidgetsService",
+                    "optional": false,
+                    "description": "",
+                    "line": 22,
+                    "modifierKind": [
+                        123
+                    ]
+                }
+            ],
+            "methodsClass": [
+                {
+                    "name": "getObj",
+                    "args": [
+                        {
+                            "name": "value",
+                            "type": "any",
+                            "deprecated": false,
+                            "deprecationMessage": ""
+                        }
+                    ],
+                    "optional": false,
+                    "returnType": "any",
+                    "typeParameters": [],
+                    "line": 44,
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "modifierKind": [
+                        121
+                    ],
+                    "jsdoctags": [
+                        {
+                            "name": "value",
+                            "type": "any",
+                            "deprecated": false,
+                            "deprecationMessage": "",
+                            "tagName": {
+                                "text": "param"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "loadScript",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "unknown",
+                    "typeParameters": [],
+                    "line": 48,
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "modifierKind": [
+                        121,
+                        130
+                    ]
+                },
+                {
+                    "name": "loadWidget",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "any",
+                    "typeParameters": [],
+                    "line": 30,
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "modifierKind": [
+                        121,
+                        130
+                    ]
+                },
+                {
+                    "name": "ngAfterViewInit",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "any",
+                    "typeParameters": [],
+                    "line": 25,
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "modifierKind": [
+                        130
+                    ]
+                }
+            ],
+            "deprecated": false,
+            "deprecationMessage": "",
+            "hostBindings": [],
+            "hostListeners": [],
+            "description": "",
+            "rawdescription": "\n",
+            "type": "component",
+            "sourceCode": "import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';\nimport { TimelineOptions } from './entities/timeline-options';\nimport { TimelineSource } from './entities/timeline-source';\nimport { NgxTwitterWidgetsService } from './ngx-twitter-widgets.service';\n\n@Component({\n  selector: 'ngx-twitter-timeline',\n  template: '',\n  styles: []\n})\nexport class NgxTwitterTimelineComponent implements AfterViewInit {\n\n  @Input() source: TimelineSource|object;\n  @Input() options: TimelineOptions|object;\n  @Output() onLoad: EventEmitter<any> = new EventEmitter();\n\n\n  private scriptAttr: string | any = \"twttr\";\n  private error: boolean = false;\n  constructor(\n    private element: ElementRef,\n    public widgetService: NgxTwitterWidgetsService\n  ) { }\n\n  async ngAfterViewInit() {\n    await this.loadScript();\n    this.loadWidget();\n  }\n\n  private async loadWidget() {\n\n    this.widgetService.loadElement(\n      \"createTimeline\",\n      this.getObj(this.source),\n      this.element,\n      this.options,\n      (response: object) => {\n        this.onLoad.emit(response);\n      }\n    )\n\n  }\n\n  private getObj(value: any) {\n    return typeof value === \"object\" ? { ...value } : value;\n  }\n\n  private async loadScript() {\n    return new Promise((resolve, reject) => {\n      this.widgetService.load(this.scriptAttr)\n        .then(data => { resolve(true); console.log(\"Script loaded successfully,\"); })\n        .catch(err => { reject(); console.log(\"Script load issue,\") })\n    })\n  }\n\n}\n",
+            "assetsDirs": [],
+            "styleUrlsData": "",
+            "stylesData": "",
+            "constructorObj": {
+                "name": "constructor",
+                "description": "",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "args": [
+                    {
+                        "name": "element",
+                        "type": "ElementRef",
+                        "deprecated": false,
+                        "deprecationMessage": ""
+                    },
+                    {
+                        "name": "widgetService",
+                        "type": "NgxTwitterWidgetsService",
+                        "deprecated": false,
+                        "deprecationMessage": ""
+                    }
+                ],
+                "line": 19,
+                "jsdoctags": [
+                    {
+                        "name": "element",
+                        "type": "ElementRef",
+                        "deprecated": false,
+                        "deprecationMessage": "",
+                        "tagName": {
+                            "text": "param"
+                        }
+                    },
+                    {
+                        "name": "widgetService",
+                        "type": "NgxTwitterWidgetsService",
+                        "deprecated": false,
+                        "deprecationMessage": "",
+                        "tagName": {
+                            "text": "param"
+                        }
+                    }
+                ]
+            },
+            "implements": [
+                "AfterViewInit"
+            ]
+        },
+        {
+            "name": "NgxTwitterTweetComponent",
+            "id": "component-NgxTwitterTweetComponent-1ee0ba4d99659f5fe37c3f19b2c61af4",
+            "file": "projects/ngx-twitter-widgets/src/lib/ngx-twitter-tweet.component.ts",
+            "encapsulation": [],
+            "entryComponents": [],
+            "inputs": [],
+            "outputs": [],
+            "providers": [],
+            "selector": "ngx-twitter-tweet",
+            "styleUrls": [],
+            "styles": [],
+            "template": "",
+            "templateUrl": [],
+            "viewProviders": [],
+            "inputsClass": [
+                {
+                    "name": "options",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "line": 13,
+                    "type": "TweetOption | object"
+                },
+                {
+                    "name": "tweetID",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "line": 12,
+                    "type": "string"
+                }
+            ],
+            "outputsClass": [
+                {
+                    "name": "onLoad",
+                    "defaultValue": "new EventEmitter()",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "line": 14,
+                    "type": "EventEmitter<any>"
+                }
+            ],
+            "propertiesClass": [
+                {
+                    "name": "attr",
+                    "defaultValue": "\"twElement\"",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string",
+                    "optional": false,
+                    "description": "",
+                    "line": 17,
+                    "modifierKind": [
+                        121
+                    ]
+                },
+                {
+                    "name": "error",
+                    "defaultValue": "false",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "boolean",
+                    "optional": false,
+                    "description": "",
+                    "line": 19,
+                    "modifierKind": [
+                        121
+                    ]
+                },
+                {
+                    "name": "scriptAttr",
+                    "defaultValue": "\"twttr\"",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string | any",
+                    "optional": false,
+                    "description": "",
+                    "line": 18,
+                    "modifierKind": [
+                        121
+                    ]
+                },
+                {
+                    "name": "widgetService",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "NgxTwitterWidgetsService",
+                    "optional": false,
+                    "description": "",
+                    "line": 22,
+                    "modifierKind": [
+                        123
+                    ]
+                }
+            ],
+            "methodsClass": [
+                {
+                    "name": "loadScript",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "unknown",
+                    "typeParameters": [],
+                    "line": 43,
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "modifierKind": [
+                        121,
+                        130
+                    ]
+                },
+                {
+                    "name": "loadWidget",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "any",
+                    "typeParameters": [],
+                    "line": 30,
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "modifierKind": [
+                        130
+                    ]
+                },
+                {
+                    "name": "ngAfterViewInit",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "any",
+                    "typeParameters": [],
+                    "line": 25,
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "modifierKind": [
+                        130
+                    ]
+                }
+            ],
+            "deprecated": false,
+            "deprecationMessage": "",
+            "hostBindings": [],
+            "hostListeners": [],
+            "description": "",
+            "rawdescription": "\n",
+            "type": "component",
+            "sourceCode": "import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output } from '@angular/core';\nimport { TweetOption } from './entities/tweet-option';\nimport { NgxTwitterWidgetsService } from './ngx-twitter-widgets.service';\n\n@Component({\n  selector: 'ngx-twitter-tweet',\n  template: ''\n})\nexport class NgxTwitterTweetComponent implements AfterViewInit {\n\n\n  @Input() tweetID: string;\n  @Input() options: TweetOption|object;\n  @Output() onLoad: EventEmitter<any> = new EventEmitter();\n\n\n  private attr: string = \"twElement\";\n  private scriptAttr: string | any = \"twttr\";\n  private error: boolean = false;\n  constructor(\n    private element: ElementRef,\n    public widgetService: NgxTwitterWidgetsService\n  ) { }\n\n  async ngAfterViewInit() {\n    await this.loadScript();\n    this.loadWidget();\n  }\n\n  async loadWidget() {\n\n    this.widgetService.loadElement(\n      \"createTweet\",\n      this.tweetID,\n      this.element,\n      this.options,\n      (response: object) => {\n        this.onLoad.emit(response);\n      }\n    )\n  }\n\n  private async loadScript() {\n    return new Promise((resolve, reject) => {\n      this.widgetService.load(this.scriptAttr)\n        .then(data => { resolve(true); console.log(\"Script loaded successfully,\"); })\n        .catch(err => { reject(); console.log(\"Script load issue,\") })\n    })\n  }\n}\n",
+            "assetsDirs": [],
+            "styleUrlsData": "",
+            "stylesData": "",
+            "constructorObj": {
+                "name": "constructor",
+                "description": "",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "args": [
+                    {
+                        "name": "element",
+                        "type": "ElementRef",
+                        "deprecated": false,
+                        "deprecationMessage": ""
+                    },
+                    {
+                        "name": "widgetService",
+                        "type": "NgxTwitterWidgetsService",
+                        "deprecated": false,
+                        "deprecationMessage": ""
+                    }
+                ],
+                "line": 19,
+                "jsdoctags": [
+                    {
+                        "name": "element",
+                        "type": "ElementRef",
+                        "deprecated": false,
+                        "deprecationMessage": "",
+                        "tagName": {
+                            "text": "param"
+                        }
+                    },
+                    {
+                        "name": "widgetService",
+                        "type": "NgxTwitterWidgetsService",
+                        "deprecated": false,
+                        "deprecationMessage": "",
+                        "tagName": {
+                            "text": "param"
+                        }
+                    }
+                ]
+            },
+            "implements": [
+                "AfterViewInit"
+            ]
+        }
+    ],
+    "modules": [
+        {
+            "name": "AppModule",
+            "id": "module-AppModule-ff090d9fdd40ae412c77dc8f665cda75",
+            "description": "",
+            "deprecationMessage": "",
+            "deprecated": false,
+            "file": "projects/angular-twitter-widgets-test/src/app/app.module.ts",
+            "methods": [],
+            "sourceCode": "import { NgModule } from '@angular/core';\nimport { BrowserModule } from '@angular/platform-browser';\nimport { NgxTwitterWidgetsModule } from \"ngx-twitter-widgets\";\n\nimport { AppComponent } from './app.component';\n\n@NgModule({\n  declarations: [\n    AppComponent\n  ],\n  imports: [\n    BrowserModule,\n    NgxTwitterWidgetsModule\n  ],\n  providers: [],\n  bootstrap: [AppComponent]\n})\nexport class AppModule { }\n",
+            "children": [
+                {
+                    "type": "providers",
+                    "elements": []
+                },
+                {
+                    "type": "declarations",
+                    "elements": [
+                        {
+                            "name": "AppComponent"
+                        }
+                    ]
+                },
+                {
+                    "type": "imports",
+                    "elements": [
+                        {
+                            "name": "NgxTwitterWidgetsModule"
+                        }
+                    ]
+                },
+                {
+                    "type": "exports",
+                    "elements": []
+                },
+                {
+                    "type": "bootstrap",
+                    "elements": [
+                        {
+                            "name": "AppComponent"
+                        }
+                    ]
+                },
+                {
+                    "type": "classes",
+                    "elements": []
+                }
+            ]
+        },
+        {
+            "name": "NgxTwitterWidgetsModule",
+            "id": "module-NgxTwitterWidgetsModule-772f7e420a2711878dd472d10670fce4",
+            "description": "",
+            "deprecationMessage": "",
+            "deprecated": false,
+            "file": "projects/ngx-twitter-widgets/src/lib/ngx-twitter-widgets.module.ts",
+            "methods": [],
+            "sourceCode": "import { NgModule } from '@angular/core';\nimport { NgxTwitterTimelineComponent } from './ngx-twitter-timeline.component';\nimport { NgxTwitterFollowComponent } from './ngx-twitter-follow.component';\nimport { NgxTwitterHashtagComponent } from './ngx-twitter-hashtag.component';\nimport { NgxTwitterMentionComponent } from './ngx-twitter-mention.component';\nimport { NgxTwitterShareComponent } from './ngx-twitter-share.component';\nimport { NgxTwitterTweetComponent } from './ngx-twitter-tweet.component';\n\n\n\n@NgModule({\n  declarations: [\n    NgxTwitterTimelineComponent,\n    NgxTwitterFollowComponent,\n    NgxTwitterHashtagComponent,\n    NgxTwitterMentionComponent,\n    NgxTwitterShareComponent,\n    NgxTwitterTweetComponent\n  ],\n  imports: [\n  ],\n  exports: [\n    NgxTwitterTimelineComponent,\n    NgxTwitterFollowComponent,\n    NgxTwitterHashtagComponent,\n    NgxTwitterMentionComponent,\n    NgxTwitterShareComponent,\n    NgxTwitterTweetComponent\n  ]\n})\nexport class NgxTwitterWidgetsModule { }\n",
+            "children": [
+                {
+                    "type": "providers",
+                    "elements": []
+                },
+                {
+                    "type": "declarations",
+                    "elements": [
+                        {
+                            "name": "NgxTwitterFollowComponent"
+                        },
+                        {
+                            "name": "NgxTwitterHashtagComponent"
+                        },
+                        {
+                            "name": "NgxTwitterMentionComponent"
+                        },
+                        {
+                            "name": "NgxTwitterShareComponent"
+                        },
+                        {
+                            "name": "NgxTwitterTimelineComponent"
+                        },
+                        {
+                            "name": "NgxTwitterTweetComponent"
+                        }
+                    ]
+                },
+                {
+                    "type": "imports",
+                    "elements": []
+                },
+                {
+                    "type": "exports",
+                    "elements": [
+                        {
+                            "name": "NgxTwitterFollowComponent"
+                        },
+                        {
+                            "name": "NgxTwitterHashtagComponent"
+                        },
+                        {
+                            "name": "NgxTwitterMentionComponent"
+                        },
+                        {
+                            "name": "NgxTwitterShareComponent"
+                        },
+                        {
+                            "name": "NgxTwitterTimelineComponent"
+                        },
+                        {
+                            "name": "NgxTwitterTweetComponent"
+                        }
+                    ]
+                },
+                {
+                    "type": "bootstrap",
+                    "elements": []
+                },
+                {
+                    "type": "classes",
+                    "elements": []
+                }
+            ]
+        }
+    ],
+    "miscellaneous": {
+        "variables": [
+            {
+                "name": "context",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "projects/angular-twitter-widgets-test/src/test.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "",
+                "defaultValue": "require.context('./', true, /\\.spec\\.ts$/)"
+            },
+            {
+                "name": "context",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "projects/ngx-twitter-widgets/src/test.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "",
+                "defaultValue": "require.context('./', true, /\\.spec\\.ts$/)"
+            },
+            {
+                "name": "environment",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "projects/angular-twitter-widgets-test/src/environments/environment.prod.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "object",
+                "defaultValue": "{\n  production: true\n}"
+            },
+            {
+                "name": "environment",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "projects/angular-twitter-widgets-test/src/environments/environment.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "object",
+                "defaultValue": "{\n  production: false\n}"
+            },
+            {
+                "name": "FollowButton",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "stories/TwitterFollowButton.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "",
+                "defaultValue": "Template.bind({})"
+            },
+            {
+                "name": "FollowButtonLarge",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "stories/TwitterFollowButton.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "",
+                "defaultValue": "Template.bind({})"
+            },
+            {
+                "name": "HashtagButton",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "stories/TwitterHashtagButton.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "",
+                "defaultValue": "Template.bind({})"
+            },
+            {
+                "name": "HashtagButtonLarge",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "stories/TwitterHashtagButton.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "",
+                "defaultValue": "Template.bind({})"
+            },
+            {
+                "name": "MentionButton",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "stories/TwitterMentionButton.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "",
+                "defaultValue": "Template.bind({})"
+            },
+            {
+                "name": "MentionButtonLarge",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "stories/TwitterMentionButton.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "",
+                "defaultValue": "Template.bind({})"
+            },
+            {
+                "name": "require",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "projects/angular-twitter-widgets-test/src/test.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "literal type"
+            },
+            {
+                "name": "require",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "projects/ngx-twitter-widgets/src/test.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "literal type"
+            },
+            {
+                "name": "ScriptStore",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "projects/ngx-twitter-widgets/src/lib/ngx-twitter-widgets.service.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "Scripts[]",
+                "defaultValue": "[\n  { name: 'twttr', src: 'https://platform.twitter.com/widgets.js' },\n]"
+            },
+            {
+                "name": "ShareButton",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "stories/TwitterShareButton.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "",
+                "defaultValue": "Template.bind({})"
+            },
+            {
+                "name": "ShareButtonLarge",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "stories/TwitterShareButton.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "",
+                "defaultValue": "Template.bind({})"
+            },
+            {
+                "name": "Template",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "stories/TwitterFollowButton.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "Story<NgxTwitterFollowComponent>",
+                "defaultValue": "(args: NgxTwitterFollowComponent) => ({\n  props: args,\n})"
+            },
+            {
+                "name": "Template",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "stories/TwitterHashtagButton.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "Story<NgxTwitterHashtagComponent>",
+                "defaultValue": "(args: NgxTwitterHashtagComponent) => ({\n  props: args,\n})"
+            },
+            {
+                "name": "Template",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "stories/TwitterMentionButton.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "Story<NgxTwitterMentionComponent>",
+                "defaultValue": "(args: NgxTwitterMentionComponent) => ({\n    props: args,\n})"
+            },
+            {
+                "name": "Template",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "stories/TwitterShareButton.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "Story<NgxTwitterShareComponent>",
+                "defaultValue": "(args: NgxTwitterShareComponent) => ({\n  props: args,\n})"
+            },
+            {
+                "name": "Template",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "stories/TwitterTimlineEmbed.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "Story<NgxTwitterTimelineComponent>",
+                "defaultValue": "(args: NgxTwitterTimelineComponent) => ({\n  props: args,\n})"
+            },
+            {
+                "name": "Template",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "stories/TwitterTweetEmbed.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "Story<NgxTwitterTweetComponent>",
+                "defaultValue": "(args: NgxTwitterTweetComponent) => ({\n    props: args,\n})"
+            },
+            {
+                "name": "TimelineCollection",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "stories/TwitterTimlineEmbed.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "",
+                "defaultValue": "Template.bind({})"
+            },
+            {
+                "name": "TimelineCustomBorderColor",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "stories/TwitterTimlineEmbed.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "",
+                "defaultValue": "Template.bind({})"
+            },
+            {
+                "name": "TimelineDarkTheme",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "stories/TwitterTimlineEmbed.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "",
+                "defaultValue": "Template.bind({})"
+            },
+            {
+                "name": "TimelineLikesWithScreenName",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "stories/TwitterTimlineEmbed.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "",
+                "defaultValue": "Template.bind({})"
+            },
+            {
+                "name": "TimelineLikesWithUserId",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "stories/TwitterTimlineEmbed.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "",
+                "defaultValue": "Template.bind({})"
+            },
+            {
+                "name": "TimelineListWithListId",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "stories/TwitterTimlineEmbed.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "",
+                "defaultValue": "Template.bind({})"
+            },
+            {
+                "name": "TimelineListWithScreenNameSlug",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "stories/TwitterTimlineEmbed.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "",
+                "defaultValue": "Template.bind({})"
+            },
+            {
+                "name": "TimelineNoBorder",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "stories/TwitterTimlineEmbed.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "",
+                "defaultValue": "Template.bind({})"
+            },
+            {
+                "name": "TimelineNoHeaderNoFooter",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "stories/TwitterTimlineEmbed.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "",
+                "defaultValue": "Template.bind({})"
+            },
+            {
+                "name": "TimelineNoScrollbar",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "stories/TwitterTimlineEmbed.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "",
+                "defaultValue": "Template.bind({})"
+            },
+            {
+                "name": "TimelineProfileWithScreenName",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "stories/TwitterTimlineEmbed.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "",
+                "defaultValue": "Template.bind({})"
+            },
+            {
+                "name": "TimelineProfileWithUserId",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "stories/TwitterTimlineEmbed.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "",
+                "defaultValue": "Template.bind({})"
+            },
+            {
+                "name": "TimelineTweetLimit",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "stories/TwitterTimlineEmbed.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "",
+                "defaultValue": "Template.bind({})"
+            },
+            {
+                "name": "TimelineUrlWithCollectionUrl",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "stories/TwitterTimlineEmbed.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "",
+                "defaultValue": "Template.bind({})"
+            },
+            {
+                "name": "TimelineUrlWithLikesUrl",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "stories/TwitterTimlineEmbed.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "",
+                "defaultValue": "Template.bind({})"
+            },
+            {
+                "name": "TimelineUrlWithListUrl",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "stories/TwitterTimlineEmbed.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "",
+                "defaultValue": "Template.bind({})"
+            },
+            {
+                "name": "TimelineUrlWithProfileUrl",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "stories/TwitterTimlineEmbed.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "",
+                "defaultValue": "Template.bind({})"
+            },
+            {
+                "name": "TweetEmbed",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "stories/TwitterTweetEmbed.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "",
+                "defaultValue": "Template.bind({})"
+            }
+        ],
+        "functions": [],
+        "typealiases": [],
+        "enumerations": [
+            {
+                "name": "AreaPoliteOptions",
+                "childs": [
+                    {
+                        "name": "polite",
+                        "deprecated": false,
+                        "deprecationMessage": ""
+                    },
+                    {
+                        "name": "assertive",
+                        "deprecated": false,
+                        "deprecationMessage": ""
+                    },
+                    {
+                        "name": "rude",
+                        "deprecated": false,
+                        "deprecationMessage": ""
+                    }
+                ],
+                "ctype": "miscellaneous",
+                "subtype": "enum",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "description": "",
+                "file": "projects/ngx-twitter-widgets/src/lib/entities/timeline-options.ts"
+            },
+            {
+                "name": "ChromeOptions",
+                "childs": [
+                    {
+                        "name": "noheader",
+                        "deprecated": false,
+                        "deprecationMessage": ""
+                    },
+                    {
+                        "name": "nofooter",
+                        "deprecated": false,
+                        "deprecationMessage": ""
+                    },
+                    {
+                        "name": "noborders",
+                        "deprecated": false,
+                        "deprecationMessage": ""
+                    },
+                    {
+                        "name": "transparent",
+                        "deprecated": false,
+                        "deprecationMessage": ""
+                    },
+                    {
+                        "name": "noscrollbar",
+                        "deprecated": false,
+                        "deprecationMessage": ""
+                    }
+                ],
+                "ctype": "miscellaneous",
+                "subtype": "enum",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "description": "",
+                "file": "projects/ngx-twitter-widgets/src/lib/entities/timeline-options.ts"
+            },
+            {
+                "name": "SourceType",
+                "childs": [
+                    {
+                        "name": "profile",
+                        "deprecated": false,
+                        "deprecationMessage": ""
+                    },
+                    {
+                        "name": "list",
+                        "deprecated": false,
+                        "deprecationMessage": ""
+                    },
+                    {
+                        "name": "collection",
+                        "deprecated": false,
+                        "deprecationMessage": ""
+                    },
+                    {
+                        "name": "likes",
+                        "deprecated": false,
+                        "deprecationMessage": ""
+                    }
+                ],
+                "ctype": "miscellaneous",
+                "subtype": "enum",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "description": "",
+                "file": "projects/ngx-twitter-widgets/src/lib/entities/timeline-source.ts"
+            },
+            {
+                "name": "ThemeOptions",
+                "childs": [
+                    {
+                        "name": "dark",
+                        "deprecated": false,
+                        "deprecationMessage": ""
+                    },
+                    {
+                        "name": "light",
+                        "deprecated": false,
+                        "deprecationMessage": ""
+                    }
+                ],
+                "ctype": "miscellaneous",
+                "subtype": "enum",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "description": "",
+                "file": "projects/ngx-twitter-widgets/src/lib/entities/timeline-options.ts"
+            }
+        ],
+        "groupedVariables": {
+            "projects/angular-twitter-widgets-test/src/test.ts": [
+                {
+                    "name": "context",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "projects/angular-twitter-widgets-test/src/test.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "defaultValue": "require.context('./', true, /\\.spec\\.ts$/)"
+                },
+                {
+                    "name": "require",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "projects/angular-twitter-widgets-test/src/test.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "literal type"
+                }
+            ],
+            "projects/ngx-twitter-widgets/src/test.ts": [
+                {
+                    "name": "context",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "projects/ngx-twitter-widgets/src/test.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "defaultValue": "require.context('./', true, /\\.spec\\.ts$/)"
+                },
+                {
+                    "name": "require",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "projects/ngx-twitter-widgets/src/test.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "literal type"
+                }
+            ],
+            "projects/angular-twitter-widgets-test/src/environments/environment.prod.ts": [
+                {
+                    "name": "environment",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "projects/angular-twitter-widgets-test/src/environments/environment.prod.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "object",
+                    "defaultValue": "{\n  production: true\n}"
+                }
+            ],
+            "projects/angular-twitter-widgets-test/src/environments/environment.ts": [
+                {
+                    "name": "environment",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "projects/angular-twitter-widgets-test/src/environments/environment.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "object",
+                    "defaultValue": "{\n  production: false\n}"
+                }
+            ],
+            "stories/TwitterFollowButton.stories.ts": [
+                {
+                    "name": "FollowButton",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "stories/TwitterFollowButton.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "defaultValue": "Template.bind({})"
+                },
+                {
+                    "name": "FollowButtonLarge",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "stories/TwitterFollowButton.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "defaultValue": "Template.bind({})"
+                },
+                {
+                    "name": "Template",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "stories/TwitterFollowButton.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "Story<NgxTwitterFollowComponent>",
+                    "defaultValue": "(args: NgxTwitterFollowComponent) => ({\n  props: args,\n})"
+                }
+            ],
+            "stories/TwitterHashtagButton.stories.ts": [
+                {
+                    "name": "HashtagButton",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "stories/TwitterHashtagButton.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "defaultValue": "Template.bind({})"
+                },
+                {
+                    "name": "HashtagButtonLarge",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "stories/TwitterHashtagButton.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "defaultValue": "Template.bind({})"
+                },
+                {
+                    "name": "Template",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "stories/TwitterHashtagButton.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "Story<NgxTwitterHashtagComponent>",
+                    "defaultValue": "(args: NgxTwitterHashtagComponent) => ({\n  props: args,\n})"
+                }
+            ],
+            "stories/TwitterMentionButton.stories.ts": [
+                {
+                    "name": "MentionButton",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "stories/TwitterMentionButton.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "defaultValue": "Template.bind({})"
+                },
+                {
+                    "name": "MentionButtonLarge",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "stories/TwitterMentionButton.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "defaultValue": "Template.bind({})"
+                },
+                {
+                    "name": "Template",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "stories/TwitterMentionButton.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "Story<NgxTwitterMentionComponent>",
+                    "defaultValue": "(args: NgxTwitterMentionComponent) => ({\n    props: args,\n})"
+                }
+            ],
+            "projects/ngx-twitter-widgets/src/lib/ngx-twitter-widgets.service.ts": [
+                {
+                    "name": "ScriptStore",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "projects/ngx-twitter-widgets/src/lib/ngx-twitter-widgets.service.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "Scripts[]",
+                    "defaultValue": "[\n  { name: 'twttr', src: 'https://platform.twitter.com/widgets.js' },\n]"
+                }
+            ],
+            "stories/TwitterShareButton.stories.ts": [
+                {
+                    "name": "ShareButton",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "stories/TwitterShareButton.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "defaultValue": "Template.bind({})"
+                },
+                {
+                    "name": "ShareButtonLarge",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "stories/TwitterShareButton.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "defaultValue": "Template.bind({})"
+                },
+                {
+                    "name": "Template",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "stories/TwitterShareButton.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "Story<NgxTwitterShareComponent>",
+                    "defaultValue": "(args: NgxTwitterShareComponent) => ({\n  props: args,\n})"
+                }
+            ],
+            "stories/TwitterTimlineEmbed.stories.ts": [
+                {
+                    "name": "Template",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "stories/TwitterTimlineEmbed.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "Story<NgxTwitterTimelineComponent>",
+                    "defaultValue": "(args: NgxTwitterTimelineComponent) => ({\n  props: args,\n})"
+                },
+                {
+                    "name": "TimelineCollection",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "stories/TwitterTimlineEmbed.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "defaultValue": "Template.bind({})"
+                },
+                {
+                    "name": "TimelineCustomBorderColor",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "stories/TwitterTimlineEmbed.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "defaultValue": "Template.bind({})"
+                },
+                {
+                    "name": "TimelineDarkTheme",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "stories/TwitterTimlineEmbed.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "defaultValue": "Template.bind({})"
+                },
+                {
+                    "name": "TimelineLikesWithScreenName",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "stories/TwitterTimlineEmbed.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "defaultValue": "Template.bind({})"
+                },
+                {
+                    "name": "TimelineLikesWithUserId",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "stories/TwitterTimlineEmbed.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "defaultValue": "Template.bind({})"
+                },
+                {
+                    "name": "TimelineListWithListId",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "stories/TwitterTimlineEmbed.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "defaultValue": "Template.bind({})"
+                },
+                {
+                    "name": "TimelineListWithScreenNameSlug",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "stories/TwitterTimlineEmbed.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "defaultValue": "Template.bind({})"
+                },
+                {
+                    "name": "TimelineNoBorder",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "stories/TwitterTimlineEmbed.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "defaultValue": "Template.bind({})"
+                },
+                {
+                    "name": "TimelineNoHeaderNoFooter",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "stories/TwitterTimlineEmbed.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "defaultValue": "Template.bind({})"
+                },
+                {
+                    "name": "TimelineNoScrollbar",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "stories/TwitterTimlineEmbed.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "defaultValue": "Template.bind({})"
+                },
+                {
+                    "name": "TimelineProfileWithScreenName",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "stories/TwitterTimlineEmbed.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "defaultValue": "Template.bind({})"
+                },
+                {
+                    "name": "TimelineProfileWithUserId",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "stories/TwitterTimlineEmbed.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "defaultValue": "Template.bind({})"
+                },
+                {
+                    "name": "TimelineTweetLimit",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "stories/TwitterTimlineEmbed.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "defaultValue": "Template.bind({})"
+                },
+                {
+                    "name": "TimelineUrlWithCollectionUrl",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "stories/TwitterTimlineEmbed.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "defaultValue": "Template.bind({})"
+                },
+                {
+                    "name": "TimelineUrlWithLikesUrl",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "stories/TwitterTimlineEmbed.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "defaultValue": "Template.bind({})"
+                },
+                {
+                    "name": "TimelineUrlWithListUrl",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "stories/TwitterTimlineEmbed.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "defaultValue": "Template.bind({})"
+                },
+                {
+                    "name": "TimelineUrlWithProfileUrl",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "stories/TwitterTimlineEmbed.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "defaultValue": "Template.bind({})"
+                }
+            ],
+            "stories/TwitterTweetEmbed.stories.ts": [
+                {
+                    "name": "Template",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "stories/TwitterTweetEmbed.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "Story<NgxTwitterTweetComponent>",
+                    "defaultValue": "(args: NgxTwitterTweetComponent) => ({\n    props: args,\n})"
+                },
+                {
+                    "name": "TweetEmbed",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "stories/TwitterTweetEmbed.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "defaultValue": "Template.bind({})"
+                }
+            ]
+        },
+        "groupedFunctions": {},
+        "groupedEnumerations": {
+            "projects/ngx-twitter-widgets/src/lib/entities/timeline-options.ts": [
+                {
+                    "name": "AreaPoliteOptions",
+                    "childs": [
+                        {
+                            "name": "polite",
+                            "deprecated": false,
+                            "deprecationMessage": ""
+                        },
+                        {
+                            "name": "assertive",
+                            "deprecated": false,
+                            "deprecationMessage": ""
+                        },
+                        {
+                            "name": "rude",
+                            "deprecated": false,
+                            "deprecationMessage": ""
+                        }
+                    ],
+                    "ctype": "miscellaneous",
+                    "subtype": "enum",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "description": "",
+                    "file": "projects/ngx-twitter-widgets/src/lib/entities/timeline-options.ts"
+                },
+                {
+                    "name": "ChromeOptions",
+                    "childs": [
+                        {
+                            "name": "noheader",
+                            "deprecated": false,
+                            "deprecationMessage": ""
+                        },
+                        {
+                            "name": "nofooter",
+                            "deprecated": false,
+                            "deprecationMessage": ""
+                        },
+                        {
+                            "name": "noborders",
+                            "deprecated": false,
+                            "deprecationMessage": ""
+                        },
+                        {
+                            "name": "transparent",
+                            "deprecated": false,
+                            "deprecationMessage": ""
+                        },
+                        {
+                            "name": "noscrollbar",
+                            "deprecated": false,
+                            "deprecationMessage": ""
+                        }
+                    ],
+                    "ctype": "miscellaneous",
+                    "subtype": "enum",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "description": "",
+                    "file": "projects/ngx-twitter-widgets/src/lib/entities/timeline-options.ts"
+                },
+                {
+                    "name": "ThemeOptions",
+                    "childs": [
+                        {
+                            "name": "dark",
+                            "deprecated": false,
+                            "deprecationMessage": ""
+                        },
+                        {
+                            "name": "light",
+                            "deprecated": false,
+                            "deprecationMessage": ""
+                        }
+                    ],
+                    "ctype": "miscellaneous",
+                    "subtype": "enum",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "description": "",
+                    "file": "projects/ngx-twitter-widgets/src/lib/entities/timeline-options.ts"
+                }
+            ],
+            "projects/ngx-twitter-widgets/src/lib/entities/timeline-source.ts": [
+                {
+                    "name": "SourceType",
+                    "childs": [
+                        {
+                            "name": "profile",
+                            "deprecated": false,
+                            "deprecationMessage": ""
+                        },
+                        {
+                            "name": "list",
+                            "deprecated": false,
+                            "deprecationMessage": ""
+                        },
+                        {
+                            "name": "collection",
+                            "deprecated": false,
+                            "deprecationMessage": ""
+                        },
+                        {
+                            "name": "likes",
+                            "deprecated": false,
+                            "deprecationMessage": ""
+                        }
+                    ],
+                    "ctype": "miscellaneous",
+                    "subtype": "enum",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "description": "",
+                    "file": "projects/ngx-twitter-widgets/src/lib/entities/timeline-source.ts"
+                }
+            ]
+        },
+        "groupedTypeAliases": {}
+    },
+    "routes": [],
+    "coverage": {
+        "count": 0,
+        "status": "low",
+        "files": [
+            {
+                "filePath": "projects/angular-twitter-widgets-test/src/app/app.component.ts",
+                "type": "component",
+                "linktype": "component",
+                "name": "AppComponent",
+                "coveragePercent": 0,
+                "coverageCount": "0/3",
+                "status": "low"
+            },
+            {
+                "filePath": "projects/angular-twitter-widgets-test/src/environments/environment.prod.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "environment",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "projects/angular-twitter-widgets-test/src/environments/environment.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "environment",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "projects/angular-twitter-widgets-test/src/test.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "context",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "projects/angular-twitter-widgets-test/src/test.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "require",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "projects/ngx-twitter-widgets/src/lib/entities/follow-options.ts",
+                "type": "class",
+                "linktype": "classe",
+                "name": "FollowOptions",
+                "coveragePercent": 0,
+                "coverageCount": "0/7",
+                "status": "low"
+            },
+            {
+                "filePath": "projects/ngx-twitter-widgets/src/lib/entities/hashtag-options.ts",
+                "type": "class",
+                "linktype": "classe",
+                "name": "HashtagOptions",
+                "coveragePercent": 0,
+                "coverageCount": "0/9",
+                "status": "low"
+            },
+            {
+                "filePath": "projects/ngx-twitter-widgets/src/lib/entities/timeline-options.ts",
+                "type": "class",
+                "linktype": "classe",
+                "name": "TimelineOptions",
+                "coveragePercent": 0,
+                "coverageCount": "0/9",
+                "status": "low"
+            },
+            {
+                "filePath": "projects/ngx-twitter-widgets/src/lib/entities/timeline-source.ts",
+                "type": "class",
+                "linktype": "classe",
+                "name": "TimelineSource",
+                "coveragePercent": 0,
+                "coverageCount": "0/6",
+                "status": "low"
+            },
+            {
+                "filePath": "projects/ngx-twitter-widgets/src/lib/entities/tweet-option.ts",
+                "type": "class",
+                "linktype": "classe",
+                "name": "TweetOption",
+                "coveragePercent": 0,
+                "coverageCount": "0/9",
+                "status": "low"
+            },
+            {
+                "filePath": "projects/ngx-twitter-widgets/src/lib/ngx-twitter-follow.component.ts",
+                "type": "component",
+                "linktype": "component",
+                "name": "NgxTwitterFollowComponent",
+                "coveragePercent": 0,
+                "coverageCount": "0/12",
+                "status": "low"
+            },
+            {
+                "filePath": "projects/ngx-twitter-widgets/src/lib/ngx-twitter-hashtag.component.ts",
+                "type": "component",
+                "linktype": "component",
+                "name": "NgxTwitterHashtagComponent",
+                "coveragePercent": 0,
+                "coverageCount": "0/12",
+                "status": "low"
+            },
+            {
+                "filePath": "projects/ngx-twitter-widgets/src/lib/ngx-twitter-mention.component.ts",
+                "type": "component",
+                "linktype": "component",
+                "name": "NgxTwitterMentionComponent",
+                "coveragePercent": 0,
+                "coverageCount": "0/12",
+                "status": "low"
+            },
+            {
+                "filePath": "projects/ngx-twitter-widgets/src/lib/ngx-twitter-share.component.ts",
+                "type": "component",
+                "linktype": "component",
+                "name": "NgxTwitterShareComponent",
+                "coveragePercent": 0,
+                "coverageCount": "0/12",
+                "status": "low"
+            },
+            {
+                "filePath": "projects/ngx-twitter-widgets/src/lib/ngx-twitter-timeline.component.ts",
+                "type": "component",
+                "linktype": "component",
+                "name": "NgxTwitterTimelineComponent",
+                "coveragePercent": 0,
+                "coverageCount": "0/12",
+                "status": "low"
+            },
+            {
+                "filePath": "projects/ngx-twitter-widgets/src/lib/ngx-twitter-tweet.component.ts",
+                "type": "component",
+                "linktype": "component",
+                "name": "NgxTwitterTweetComponent",
+                "coveragePercent": 0,
+                "coverageCount": "0/12",
+                "status": "low"
+            },
+            {
+                "filePath": "projects/ngx-twitter-widgets/src/lib/ngx-twitter-widgets.service.ts",
+                "type": "injectable",
+                "linktype": "injectable",
+                "name": "NgxTwitterWidgetsService",
+                "coveragePercent": 0,
+                "coverageCount": "0/10",
+                "status": "low"
+            },
+            {
+                "filePath": "projects/ngx-twitter-widgets/src/lib/ngx-twitter-widgets.service.ts",
+                "type": "interface",
+                "linktype": "interface",
+                "name": "Scripts",
+                "coveragePercent": 0,
+                "coverageCount": "0/3",
+                "status": "low"
+            },
+            {
+                "filePath": "projects/ngx-twitter-widgets/src/lib/ngx-twitter-widgets.service.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "ScriptStore",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "projects/ngx-twitter-widgets/src/test.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "context",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "projects/ngx-twitter-widgets/src/test.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "require",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "stories/TwitterFollowButton.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "FollowButton",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "stories/TwitterFollowButton.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "FollowButtonLarge",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "stories/TwitterFollowButton.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "Template",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "stories/TwitterHashtagButton.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "HashtagButton",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "stories/TwitterHashtagButton.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "HashtagButtonLarge",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "stories/TwitterHashtagButton.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "Template",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "stories/TwitterMentionButton.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "MentionButton",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "stories/TwitterMentionButton.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "MentionButtonLarge",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "stories/TwitterMentionButton.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "Template",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "stories/TwitterShareButton.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "ShareButton",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "stories/TwitterShareButton.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "ShareButtonLarge",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "stories/TwitterShareButton.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "Template",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "stories/TwitterTimlineEmbed.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "Template",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "stories/TwitterTimlineEmbed.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "TimelineCollection",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "stories/TwitterTimlineEmbed.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "TimelineCustomBorderColor",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "stories/TwitterTimlineEmbed.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "TimelineDarkTheme",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "stories/TwitterTimlineEmbed.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "TimelineLikesWithScreenName",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "stories/TwitterTimlineEmbed.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "TimelineLikesWithUserId",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "stories/TwitterTimlineEmbed.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "TimelineListWithListId",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "stories/TwitterTimlineEmbed.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "TimelineListWithScreenNameSlug",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "stories/TwitterTimlineEmbed.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "TimelineNoBorder",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "stories/TwitterTimlineEmbed.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "TimelineNoHeaderNoFooter",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "stories/TwitterTimlineEmbed.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "TimelineNoScrollbar",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "stories/TwitterTimlineEmbed.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "TimelineProfileWithScreenName",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "stories/TwitterTimlineEmbed.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "TimelineProfileWithUserId",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "stories/TwitterTimlineEmbed.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "TimelineTweetLimit",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "stories/TwitterTimlineEmbed.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "TimelineUrlWithCollectionUrl",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "stories/TwitterTimlineEmbed.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "TimelineUrlWithLikesUrl",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "stories/TwitterTimlineEmbed.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "TimelineUrlWithListUrl",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "stories/TwitterTimlineEmbed.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "TimelineUrlWithProfileUrl",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "stories/TwitterTweetEmbed.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "Template",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "stories/TwitterTweetEmbed.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "TweetEmbed",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            }
+        ]
+    }
+}
