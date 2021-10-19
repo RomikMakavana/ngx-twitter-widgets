@@ -1,6 +1,6 @@
 # Angular Twitter Widgets Component
 
-[![NPM](https://img.shields.io/npm/v/react-twitter-embed.svg)](https://www.npmjs.com/package/ngx-twitter-widgets) [![Storybook](https://cdn.jsdelivr.net/gh/storybooks/brand@master/badge/badge-storybook.svg)](https://romikmakavana.github.io/ngx-twitter-widgets/docs/)  
+[![NPM](https://img.shields.io/npm/v/react-twitter-embed.svg)](https://www.npmjs.com/package/ngx-twitter-widgets) [![Storybook](https://cdn.jsdelivr.net/gh/storybooks/brand@master/badge/badge-storybook.svg)](https://romikmakavana.github.io/ngx-twitter-widgets/)  
 <!-- [![Build Status](https://travis-ci.org/saurabhnemade/react-twitter-embed.svg?branch=storybook-migration)](https://travis-ci.org/saurabhnemade/react-twitter-embed)  -->
 <!-- [![Known Vulnerabilities](https://snyk.io/test/github/saurabhnemade/react-twitter-embed/badge.svg)](https://snyk.io/test/github/saurabhnemade/react-twitter-embed)  -->
 <!-- [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com) [![License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](https://raw.githubusercontent.com/saurabhnemade/react-twitter-embed/master/LICENSE) -->
@@ -10,7 +10,7 @@ Add Twitter Widgets to your angular project
 
 ## Demo
 
-https://romikmakavana.github.io/ngx-twitter-widgets/docs/
+https://romikmakavana.github.io/ngx-twitter-widgets/
 
 ## Install
 
