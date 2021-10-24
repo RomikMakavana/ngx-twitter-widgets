@@ -86,7 +86,7 @@ export class AppModule { }
 
  **Explore All Options by Twitter Widgets API:**
 
-      https://developer.twitter.com/en/docs/twitter-for-websites/javascript-api/overview
+https://romikmakavana.github.io/ngx-twitter-widgets/
 
 
 ## License
